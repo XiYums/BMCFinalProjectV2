@@ -2,11 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/screens/admin_panel_screen.dart';
-import 'package:ecommerce_app/widgets/product _card.dart';
+import 'package:ecommerce_app/widgets/product_card.dart';
 import 'package:ecommerce_app/screens/product_detail_screen.dart';
 import 'package:ecommerce_app/providers/cart_provider.dart';
 import 'package:ecommerce_app/screens/cart_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:ecommerce_app/screens/order_history_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -45,9 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
       // 8. If the document exists...
       if (doc.exists && doc.data() != null) {
         // 9. ...call setState() to save the role to our variable
-        setState(() {
-          _userRole = doc.data()!['role'];
-        });
+          setState(() {
+            _userRole = doc.data()!['role'];
+          });
       }
     } catch (e) {
       print("Error fetching user role: $e");
@@ -91,6 +92,40 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
 
+              ),
+
+
+            );
+          },
+        ),
+
+
+      // 2. --- ADD THIS NEW BUTTON ---
+      IconButton(
+        icon: const Icon(Icons.receipt_long), // A "receipt" icon
+        tooltip: 'My Orders',
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const OrderHistoryScreen(),
+            ),
+          );
+        },
+      ),
+
+
+      // 2. --- THIS IS THE MAGIC ---
+      //    This is a "collection-if". The IconButton will only
+      //    be built IF _userRole is equal to 'admin'.
+      if (_userRole == 'admin')
+        IconButton(
+          icon: const Icon(Icons.admin_panel_settings),
+          tooltip: 'Admin Panel',
+          onPressed: () {
+            // 3. This is why we imported admin_panel_screen.dart
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const AdminPanelScreen(),
               ),
             );
           },
